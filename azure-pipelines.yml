@@ -14,3 +14,16 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'npm run build'
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
+    replaceExistingArchive: true
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'mlddconnectionfederationmanual'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az storage blob upload --account-name tempstgg --container-name tempcontainer --name build.zip --file "$(System.DefaultWorkingDirectory)\build.zip" --auth-mode login'
